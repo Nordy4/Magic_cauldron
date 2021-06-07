@@ -11,13 +11,16 @@ public class PickUp1 : MonoBehaviour
     private void OnTriggerEnter(Collider other){
 
         if((other.gameObject.CompareTag("Player1")) && !(PlayerManager.Instance.get_player1Grabbing())){
-            print("cojo al dani");
             grabbed = true;
             PlayerManager.Instance.set_player1Grabbing(true);
             this.transform.SetParent(other.transform, true);
         }
         
         if((other.gameObject.CompareTag("Cauldron")) && (grabbed == true)){
+            PlayerManager.Instance.set_player1Grabbing(false);
+        }
+
+        if((other.gameObject.CompareTag("Table")) && (grabbed == true)){
             PlayerManager.Instance.set_player1Grabbing(false);
         }
         

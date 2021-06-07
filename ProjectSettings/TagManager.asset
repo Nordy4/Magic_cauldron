@@ -28,6 +28,8 @@ TagManager:
   - Green
   - Yellow
   - Purple
+  - Table
+  - Recipe
   layers:
   - Default
   - TransparentFX

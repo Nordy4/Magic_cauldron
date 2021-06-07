@@ -28,8 +28,9 @@ using UnityEngine.UI;
 
 public class FiducialController : MonoBehaviour
 {
+    
     public int MarkerID = 0;
-
+    
     public enum RotationAxis { Forward, Back, Up, Down, Left, Right };
 
     //translation

@@ -10,13 +10,16 @@ public class PickUp2 : MonoBehaviour
     private void OnTriggerEnter(Collider other){
 
         if((other.gameObject.CompareTag("Player2")) && !(PlayerManager.Instance.get_player2Grabbing())){
-            print("cojo un objeto");
             grabbed = true;
             PlayerManager.Instance.set_player2Grabbing(true);
             this.transform.SetParent(other.transform, true);
         }
         
         if((other.gameObject.CompareTag("Cauldron")) && (grabbed == true)){
+            PlayerManager.Instance.set_player2Grabbing(false);
+        }
+
+        if((other.gameObject.CompareTag("Table")) && (grabbed == true)){
             PlayerManager.Instance.set_player2Grabbing(false);
         }
         
