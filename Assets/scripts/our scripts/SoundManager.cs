@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip endLoseGame;
     public AudioClip endWinGame;
     public AudioClip backgroundMusic;
-    public AudioClip cauldronSound;    
+    public AudioClip cauldronSound;   
 
     private Vector3 cameraPosition;
 

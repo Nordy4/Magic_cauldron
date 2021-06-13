@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
+using UnityEngine.SceneManagement;
 
 public class CauldronManager : MonoBehaviour
 {
+    
+   public GameObject cauldron;
+   public GameObject drop;
    public string color = "";
-   public GameObject poties; 
    public ParticleSystem part;
    public Light light_red;
    public Light light_blue;
@@ -14,6 +18,9 @@ public class CauldronManager : MonoBehaviour
    public Light light_yellow;
    public Light light_purple;
    private bool moveCauldron = false;
+   public bool redPlayer = false;
+   public bool bluePlayer = false;
+   int aux = 0;
 
    public string[] recipe = new string[5]; 
 
@@ -21,9 +28,22 @@ public class CauldronManager : MonoBehaviour
     {
         recipe = RecipeManager.Instance.getRecipe();
     }
+
+    void Update(){
+        if(redPlayer && bluePlayer && moveCauldron){
+            Vector3 newPosition = new Vector3(drop.transform.position.x,
+                                            drop.transform.position.y,
+                                            drop.transform.position.z);
+            cauldron.transform.position = Vector3.Lerp(cauldron.transform.position, newPosition,Time.deltaTime);
+        }  
+        redPlayer = false;
+        bluePlayer = false;
+
+    }
     
-    private void OnTriggerEnter(Collider other){
-        if(recipe.Length > 0){
+    private void OnTriggerStay(Collider other){
+        
+        if(recipe.Length > 0 && !other.CompareTag("Player1") && !other.CompareTag("Player2")){
             if(other.gameObject.CompareTag(recipe[0])){
                 if(color == ""){
                     color = recipe[0];
@@ -37,47 +57,61 @@ public class CauldronManager : MonoBehaviour
                     turnOffLight(recipe[0]);
                     turnOnParticles(recipe[0]);
                     recipe = recipe.Where((source, index)=>index != 0).ToArray();
-                    if(recipe.Length > 0){
-                        SoundManager.Instance.PlayCauldronSound();
-                        SoundManager.Instance.PlayOkObject();
-                    }
-                    else{
-                        SoundManager.Instance.PlayWinGame();
-                    }
-                    
-                }
-                else{
-                    other.transform.SetParent(poties.transform, true);
-                    SoundManager.Instance.PlayLoseGame();
+                    SoundManager.Instance.PlayCauldronSound();
+                    SoundManager.Instance.PlayOkObject(); 
+                    if(recipe.Length == 0){
+                        moveCauldron = true;
+                    }                  
                 }
             }
             else{
-                other.transform.SetParent(poties.transform, true);
-                SoundManager.Instance.PlayLoseGame();
+                aux++;
+                if(aux <=1){
+                    SoundManager.Instance.PlayLoseGame();
+                }
+                other.transform.SetParent(cauldron.transform, true);
+                Invoke("ResetGame", 3);
             }
         }
-        else{
-            moveCauldron = true;
-            SoundManager.Instance.PlayWinGame();
+
+        //Move cauldron
+        if(moveCauldron){
+            if(other.CompareTag("Player1")){
+                redPlayer = true;              
+            }
+            if(other.CompareTag("Player2")){
+                bluePlayer = true;
+            }
         }
-          
     }     
+
+    private void onTriggerExit(Collider other){
+        if(moveCauldron){
+            if(other.CompareTag("Player1")){
+                redPlayer = false;
+            }
+            if(other.CompareTag("Player2")){
+                bluePlayer = false;
+            }
+            
+        }
+    }
 
     private void turnOnLight(string color){
         if(color == "Red"){
-            light_red.intensity = 15;
+            light_red.intensity = 60;
         }
         if(color == "Blue"){
-            light_blue.intensity = 15;
+            light_blue.intensity = 60;
         }
         if(color == "Green"){
-            light_green.intensity = 15;
+            light_green.intensity = 60;
         }
         if(color == "Yellow"){
-            light_yellow.intensity = 15;
+            light_yellow.intensity = 60;
         }
         if(color == "Purple"){
-            light_purple.intensity = 15;
+            light_purple.intensity = 60;
         }
     }  
 
@@ -120,97 +154,10 @@ public class CauldronManager : MonoBehaviour
             part.Play();
             part.startColor = new Color(255,0,255);
         }
-    }
-
-        /*
-        if((other.gameObject.CompareTag("Red"))){
-            if(color == ""){
-                color = "Red";
-                light_red.intensity = 15;
-                Destroy(other.gameObject);
-            }
-            else if(color == "Red"){
-                Destroy(other.gameObject);
-                color = "";
-                light_red.intensity = 0;
-                part.Play();
-                part.startColor = new Color(255,0,0);
-            }
-            else{
-                other.transform.SetParent(poties.transform, true);
-            }
-        }
-
-        if((other.gameObject.CompareTag("Blue"))){
-            if(color == ""){
-                color = "Blue";
-                light_blue.intensity = 15;
-                Destroy(other.gameObject);
-            }
-            else if(color == "Blue"){
-                Destroy(other.gameObject);
-                light_blue.intensity = 0;
-                color = "";
-                part.Play();
-                part.startColor = new Color(0,0,255);
-            }
-            else{
-                other.transform.SetParent(poties.transform, true);
-            }
-        }
-
-        if((other.gameObject.CompareTag("Green"))){
-            if(color == ""){
-                color = "Green";
-                light_green.intensity = 15;
-                Destroy(other.gameObject);
-            }
-            else if(color == "Green"){
-                Destroy(other.gameObject);
-                color = "";
-                light_green.intensity = 0;
-                part.Play();
-                part.startColor = new Color(0,255,0);
-            }
-            else{
-                other.transform.SetParent(poties.transform, true);
-            }
-        }
-
-        if((other.gameObject.CompareTag("Yellow"))){
-            if(color == ""){
-                color = "Yellow";
-                light_yellow.intensity = 15;
-                Destroy(other.gameObject);
-            }
-            else if(color == "Yellow"){
-                Destroy(other.gameObject);
-                color = "";
-                light_yellow.intensity = 0;
-                part.Play();
-                part.startColor = new Color(255,255,0);
-            }
-            else{
-                other.transform.SetParent(poties.transform, true);
-            }
-        }
-
-        if((other.gameObject.CompareTag("Purple"))){
-            if(color == ""){
-                color = "Purple";
-                light_purple.intensity = 15;
-                Destroy(other.gameObject);
-            }
-            else if(color == "Purple"){
-                Destroy(other.gameObject);
-                color = "";
-                light_purple.intensity = 0;
-                part.Play();
-                part.startColor = new Color(255,0,255);
-            }
-            else{
-                other.transform.SetParent(poties.transform, true);
-            }
-        }*/
+    } 
     
+
+    private void ResetGame(){
+        SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+    }
 }

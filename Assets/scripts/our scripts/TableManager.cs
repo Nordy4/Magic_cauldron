@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class TableManager : MonoBehaviour
 {
-
-    public GameObject poties; 
+    public GameObject entity;
 
     private void OnTriggerEnter(Collider other){
-        other.transform.SetParent(poties.transform, true);
-
+        other.transform.SetParent(entity.transform, true);
     }
 }

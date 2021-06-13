@@ -30,6 +30,8 @@ TagManager:
   - Purple
   - Table
   - Recipe
+  - RedCollider
+  - BlueCollider
   layers:
   - Default
   - TransparentFX

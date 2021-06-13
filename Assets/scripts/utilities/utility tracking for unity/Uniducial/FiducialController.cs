@@ -226,6 +226,8 @@ public class FiducialController : MonoBehaviour
 
             this.m_IsVisible = false;
         }
+
+        
     }
 
 
